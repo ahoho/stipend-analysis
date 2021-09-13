@@ -115,12 +115,7 @@ Columns:
     <payment_column>_to_col: ratio of pay to COL over the specified period
 ```
 
-# Analyze the data
-
-```{r }
-```
-
-# Plot the
+# Plot data
 
 ```{r big10_deficit_plot_fn}
 plot_big10_deficits <- function(df, pay_variable="pay_9_to_col"){
