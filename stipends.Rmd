@@ -1,0 +1,174 @@
+---
+title: "Big 10 Graduate Student Stipend Analysis"
+output: html_notebook
+---
+
+# Data preprocessing
+
+```{r setup, message=FALSE}
+library(tidyverse)
+```
+
+First, load in the self-reported stipend data. The school info is manually created, with COL data pulled from [here](https://livingwage.mit.edu/metros/14020).
+
+```{r load_data, message=FALSE}
+stipends <- 
+  read_csv("http://www.phdstipends.com/csv") %>%
+  janitor::clean_names() %>%
+  
+  # convert pays to numeric
+  mutate(across(
+    ends_with("_pay"),
+    ~(
+      str_remove_all(., pattern=",|\\$") %>%
+        as.numeric()
+    )  
+  ))
+
+# school-level information (COL, school names, etc.)
+schools <- read_csv("school_data.csv")
+```
+
+Filter down data to the Big 10 and normalize the pay rates to the appropriate time periods. We also remove outliers: some responses are per-month or per-thousand, so we remove values below $9,000/year. Others include extraordinary fellowships and post-docs. These assumptions would have to be re-evaluated if looking at the international schools.
+
+```{r cleanup}
+big10 <-
+  stipends %>%
+  filter(university %in% schools$university) %>%
+  mutate(
+     # 3-month data too noisy to consider
+     pay_12_or_9 = coalesce(x12_m_gross_pay, x9_m_gross_pay)
+  ) %>%
+  
+  # remove outliers
+  filter(pay_12_or_9 > 9000 & pay_12_or_9 < 75000) %>%
+  
+  # create a 9-month & 12-month equivalent rate
+  mutate(
+    # counts only academic year
+    pay_9_equivalent = coalesce(x9_m_gross_pay, x12_m_gross_pay * (3 / 4)),
+    
+    # does not include summer funding, since this is a bit noisy and may not be
+    # guaranteed
+    pay_12_no_summer = coalesce(x12_m_gross_pay, x9_m_gross_pay),
+    
+    # includes summer funding
+    pay_12_plus_summer = coalesce(
+      x12_m_gross_pay,
+      x9_m_gross_pay + coalesce(x3_m_gross_pay, 0)
+    ),
+  )
+```
+
+# Create school summaries
+
+First, create a function that can calculate the Cost-of-Living (COL) deficit, either as a ratio or a difference.
+```{r col_deficit_fun}
+calc_col_deficit <- function(df, fn=`/`){
+  df %>%
+    mutate(
+      col_9_mo = col * (3 / 4),
+      pay_9_to_col = fn(pay_9_equivalent, col_9_mo),
+      pay_12_no_summer_to_col = fn(pay_12_no_summer, col),
+      pay_12_plus_summer_to_col = fn(pay_12_plus_summer, col),
+      min_stipend_to_col = fn(min_stipend, col)
+    )
+}
+```
+
+Then, group our stipend data by school and calculate summary statistics (e.g., means or medians) of the pay data for each school.
+```{r summarize, message=FALSE}
+# Set the averaging function (e.g., mean or median) and the 
+# COL deficit function (e.g,, - or / )
+avg_fn <- median
+col_def_fn <- `-`
+
+big10_counts <- group_by(big10, university) %>% summarize(responses=n())
+
+big10_summary <-
+  big10 %>%
+  group_by(university) %>%
+  summarize(across(where(is.numeric), avg_fn, na.rm=TRUE)) %>%
+  left_join(big10_counts) %>%
+  left_join(schools) %>%
+  calc_col_deficit(col_def_fn) %>%
+  select(
+    university, uni, is_unionized, responses,
+    starts_with("col"), starts_with("pay"), min_stipend, min_stipend_to_col, -pay_12_or_9
+  )
+
+write_csv(big10_summary, "big10_summary.csv")
+```
+
+For posterity, here is column info:
+```
+Columns:
+    university:              University name
+    is_unionized:            Is campus unionized (includes Northwestern, which is ongoing)
+    responses:               Individual survey responses in data
+    col:                     Required annual cost of living, per MIT data
+    col_9_mo:                col*(3/4)
+    pay_9_equivalent:        9-month pay if reported, otherwise reported 12-month pay multiplied by 3/4
+    pay_12_no_summer:        12-month pay if reported, otherwise flat 9-month pay
+    pay_12_plus_summer:      12-month pay if reported, otherwise 9-month pay plus any reported 3-month pay (may include outside internships; data are noisy)
+    min_stipend:             minimum stipend reported for the school
+    <payment_column>_to_col: ratio of pay to COL over the specified period
+```
+
+# Analyze the data
+
+```{r }
+```
+
+# Plot the
+
+```{r big10_deficit_plot_fn}
+plot_big10_deficits <- function(df, pay_variable="pay_9_to_col"){
+  pay_period <- c(
+    pay_9_to_col="(median, academic year)",
+    pay_12_no_summer_to_col="(median, full-year)",
+    pay_12_plus_summer_to_col="(median, full-year w/ summer funding)",
+    min_stipend_to_col=" (based on minimum stipend)"
+  )
+  
+  df %>%
+    mutate(
+      union_labels = if_else(is_unionized, "Unionzied", "Not Unionized"),
+      union_labels = factor(
+        if_else(uni == "UMD", "UMD", union_labels),
+        levels=c("Unionzied", "Not Unionized", "UMD"),
+        ordered=TRUE
+      )
+    ) %>%
+    arrange(is_unionized, .data[[pay_variable]]) %>%
+    mutate(
+      order = 1:n(),
+    ) %>%
+    ggplot(aes(
+          x = reorder(uni, order),
+          y = !!ensym(pay_variable),
+    )) +
+    geom_bar(aes(fill=union_labels), stat="identity") +
+    scale_fill_manual(
+      values=c("#ffd200", "gray", "#E21833"),
+    ) +
+    scale_y_continuous(labels=scales::dollar_format()) +
+    labs(
+      title = paste("Cost of Living Deficit by University", pay_period[pay_variable], sep="\n"),
+      x = "",
+      y = paste("Cost-of-Living Deficit", pay_period[pay_variable], sep="\n"),
+      fill = ""
+    ) +
+    theme_classic() + 
+    theme(
+      text = element_text(size=12),
+      axis.text.x = element_text(angle=45, hjust=1)
+    )
+}
+```
+
+```{r big10_deficit_plots}
+plot_big10_deficits(big10_summary, pay_variable = "pay_9_to_col")
+plot_big10_deficits(big10_summary, pay_variable = "pay_12_plus_summer_to_col")
+plot_big10_deficits(big10_summary, pay_variable = "min_stipend_to_col")
+```

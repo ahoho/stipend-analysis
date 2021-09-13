@@ -1,0 +1,62 @@
+university,responses,uni,is_unionized,col,min_stipend
+Arizona State University (ASU),83,NA,NA,NA,NA
+Boston University (BU),76,NA,NA,NA,NA
+Brown University,57,NA,NA,NA,NA
+Carnegie Mellon University (CMU),54,NA,NA,NA,NA
+Columbia University (CU),89,NA,NA,NA,NA
+Cornell University (CU),108,NA,NA,NA,NA
+Drexel University (DU),74,NA,NA,NA,NA
+Duke University (DU),181,NA,NA,NA,NA
+Emory University,108,NA,NA,NA,NA
+Georgia Institute of Technology (Georgia Tech),109,NA,NA,NA,NA
+Harvard University (HU),114,NA,NA,NA,NA
+Indiana University,94,Indiana,FALSE,24422,9816
+Johns Hopkins University (JHU),93,NA,NA,NA,NA
+Massachusetts Institute of Technology (MIT),97,NA,NA,NA,NA
+Michigan State University (MSU),60,MSU,TRUE,24390,14820
+New York University (NYU),81,NA,NA,NA,NA
+North Carolina State University (NCSU),63,NA,NA,NA,NA
+Northwestern University (NU),125,Northwestern,TRUE,28280,33504
+Ohio State University (OSU),86,OSU,FALSE,23844,19280
+Pennsylvania State University (Penn State),115,Penn,FALSE,26281,20790
+Princeton University,84,NA,NA,NA,NA
+Purdue University - West Lafayette,90,Purdue,FALSE,23533,15448
+Rice University,62,NA,NA,NA,NA
+Rutgers the State University of New Jersey - New Brunswick,55,Rutgers,TRUE,30768,29426
+Stanford University (SU),124,NA,NA,NA,NA
+Stony Brook University - SUNY,57,NA,NA,NA,NA
+Temple University (TU),53,NA,NA,NA,NA
+Texas A&amp;M; University - College Station,59,NA,NA,NA,NA
+University of Arizona (U of A),50,NA,NA,NA,NA
+University of California - Berkeley,148,NA,NA,NA,NA
+University of California - Davis (UCD),77,NA,NA,NA,NA
+University of California - Irvine (UCI),66,NA,NA,NA,NA
+University of California - Los Angeles (UCLA),108,NA,NA,NA,NA
+University of California - San Diego (UCSD),125,NA,NA,NA,NA
+University of Chicago (UC),113,NA,NA,NA,NA
+University of Colorado - Boulder (UCB),78,NA,NA,NA,NA
+University of Delaware (UD),54,NA,NA,NA,NA
+University of Florida (UF),84,NA,NA,NA,NA
+University of Georgia (UGA),54,NA,NA,NA,NA
+University of Illinois - Urbana- Champaign (UIUC),133,UIUC,TRUE,25039,18500
+University of Kentucky (UK),99,NA,NA,NA,NA
+University of Maryland - College Park (UMD),90,UMD,FALSE,35036,18979
+University of Michigan - Ann Arbor (UM),145,Michigan,TRUE,27672,22433
+University of Minnesota - Twin Cities (UM),122,Minn,FALSE,26179,15342
+University of North Carolina - Chapel Hill (UNC),150,NA,NA,NA,NA
+University of Notre Dame (ND),64,NA,NA,NA,NA
+University of Pennsylvania,129,NA,NA,NA,NA
+University of Pittsburgh,60,NA,NA,NA,NA
+University of Rochester (UR),72,NA,NA,NA,NA
+University of Southern California (USC),135,NA,NA,NA,NA
+University of Tennessee - Knoxville,54,NA,NA,NA,NA
+University of Texas - Austin (UT),124,NA,NA,NA,NA
+University of Utah,56,NA,NA,NA,NA
+University of Virginia (UVA),89,NA,NA,NA,NA
+University of Washington (UW),100,NA,NA,NA,NA
+University of Wisconsin - Madison (UW),143,UW,TRUE,25765,20500
+Vanderbilt University,81,NA,NA,NA,NA
+Virginia Tech,53,NA,NA,NA,NA
+Washington University in St. Louis (Wash U),69,NA,NA,NA,NA
+Yale University (YU),104,NA,NA,NA,NA
+NA,290,NA,NA,NA,NA
